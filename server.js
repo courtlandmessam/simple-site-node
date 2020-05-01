@@ -36,6 +36,20 @@ app.set('views', path.join(__dirname, './views'));
 // middleware for loading static files
 app.use(express.static(path.join(__dirname, './static')));
 
+// global variable set at start of app middleware
+app.locals.siteName = 'ROUX Meetups';
+
+// global variable middleware
+app.use(async (request, response, next) => {
+  try {
+    const names = await speakersService.getNames();
+    response.locals.speakerNames = names;
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.use(
   '/',
   routes({
